@@ -6,10 +6,12 @@
         <v-col v-else-if="errorMessage" cols="12">
             <v-alert type="error">{{ errorMessage }}</v-alert>
         </v-col>
-        <v-col v-else cols="12" md="1" v-for="(item, index) in formattedWeatherData" :key="index">
-            <v-card :text="item.condition" :title="item.weekday">
+        <v-col v-else cols="12" md="4" lg="2" sm="6" v-for="(item, index) in formattedWeatherData" :key="index">
+            <v-card class="weather-card" height="280px" :text="item.condition" :title="item.weekday">
                 <v-card-subtitle>H:{{ item.maxTemp }}° L:{{ item.minTemp }}°</v-card-subtitle>
-                <v-img :src="item.icon" :width="160" />
+                <div class="d-flex justify-center align-center" style="height: 160px;">
+                    <v-img :src="item.icon" max-width="120" contain></v-img>
+                </div>
             </v-card>
         </v-col>
     </v-row>
@@ -23,8 +25,10 @@ const days = ref(10)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// Get injected city from parent component
+// Get injected city and current weather from parent component
 const city = inject('city', ref('London'))
+const currentWeather = inject('currentWeather', ref(''))
+
 const fetchWeatherData = async () => {
     try {
         errorMessage.value = ''
@@ -43,6 +47,11 @@ const fetchWeatherData = async () => {
         }
 
         weatherData.value = data.forecast.forecastday
+
+        // Set the current weather for background change
+        if (data.current && data.current.condition && data.current.condition.text) {
+            currentWeather.value = data.current.condition.text
+        }
     } catch (error) {
         console.error('Error fetching weather data:', error)
         errorMessage.value = error.message || `Weather data for "${city.value}" could not be found. Please try another location.`
@@ -75,3 +84,18 @@ const formattedWeatherData = computed(() => {
     })
 })
 </script>
+
+<style scoped>
+.weather-card {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.weather-card :deep(.v-card-title),
+.weather-card :deep(.v-card-subtitle),
+.weather-card :deep(.v-card-text) {
+    color: white !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+</style>
