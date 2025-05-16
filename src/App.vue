@@ -8,39 +8,55 @@
 
         <v-spacer></v-spacer>
 
-        <v-responsive max-width="160">
-          <v-text-field density="compact" label="Search" rounded="lg" variant="solo-filled" flat hide-details
-            single-line></v-text-field>
+        <v-responsive max-width="260">
+          <div class="d-flex align-center">
+            <v-text-field v-model="searchCity" density="compact" label="Search city" rounded="lg" variant="solo-filled"
+              flat hide-details single-line class="me-2" @keyup.enter="searchWeather"></v-text-field>
+            <v-btn color="primary" icon @click="searchWeather" :loading="isSearching">
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+          </div>
         </v-responsive>
       </v-container>
     </v-app-bar>
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
-        <router-view />
+        <router-view :city="currentCity" :key="searchKey" />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script setup>
+import { ref, provide } from 'vue'
+
 const links = [
   'Dashboard',
   'Messages',
   'Profile',
   'Updates',
 ]
-</script>
 
-<script>
-export default {
-  data: () => ({
-    links: [
-      'Dashboard',
-      'Messages',
-      'Profile',
-      'Updates',
-    ],
-  }),
+const searchCity = ref('')
+const currentCity = ref('London') // Default city
+const isSearching = ref(false)
+const searchKey = ref(0)
+
+// Make city available to child components
+provide('city', currentCity)
+
+const searchWeather = () => {
+  if (!searchCity.value.trim()) return
+
+  isSearching.value = true
+  currentCity.value = searchCity.value.trim()
+
+  // Changing the key will force the child component to re-render
+  searchKey.value++
+
+  setTimeout(() => {
+    isSearching.value = false
+  }, 1000)
 }
 </script>
