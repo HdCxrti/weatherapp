@@ -1,30 +1,8 @@
 <template>
     <v-row>
-        <v-col cols="12" md="1" v-for="(item, index) in weatherData" :key="index">
+        <v-col cols="10" md="2" v-for="(item, index) in weatherData" :key="index">
             <v-card :text="item.day.condition.text" :subtitle="index" :title="moment(item.date).format('dddd')">
                 <v-img :src="item.day.condition.icon" :width="163" />
-                <v-dialog max-width="500">
-                    <template v-slot:activator="{ props: activatorProps }">
-                        <v-btn v-bind="activatorProps" color="surface-variant" text="Open Dialog"
-                            variant="flat"></v-btn>
-                    </template>
-
-                    <template v-slot:default="{ isActive }">
-                        <v-card title="Dialog">
-                            <v-card-text>
-                                Scott is a software engineer living in San Francisco. He enjoys working with Vue.js and
-                                has a passion for building user-friendly applications. He is also an avid traveler and
-                                loves to explore new places.
-                            </v-card-text>
-
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-
-                                <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </template>
-                </v-dialog>
             </v-card>
         </v-col>
     </v-row>
